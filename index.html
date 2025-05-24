@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-T">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano de Carreira Interativo para Cientista de Dados</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Visualization & Content Choices:
+        - Report Info: General introduction to Data Science -> Goal: Inform -> Presentation: Text block -> Interaction: Static -> Justification: Sets the stage.
+        - Report Info: Essential Competencies (Technical & Soft Skills) -> Goal: Inform/Organize -> Presentation: Two-column layout with lists -> Interaction: Static lists -> Justification: Clear separation and readability of skills.
+        - Report Info: Key Tools & Languages (Python, R, SQL, BI Tools, Big Data) -> Goal: Inform/Compare -> Presentation: Tabbed interface for categories (Languages, BI, Big Data/ML), Bar Chart for Language Popularity -> Interaction: Tab switching, Chart.js tooltips -> Justification: Organizes diverse tools, visual comparison for languages.
+        - Report Info: Optimized Study Roadmap (Phases 1-3, Table 1) -> Goal: Guide/Organize -> Presentation: Phased sections with details, interactive HTML table for Tabela 1, Donut Chart for phase time allocation -> Interaction: Click to expand phase details (optional), table sorting/hover, Chart.js tooltips -> Justification: Structured guidance, visual time breakdown.
+        - Report Info: Courses, Certifications, Books (Table 2) -> Goal: Inform/Compare -> Presentation: Interactive HTML table for Tabela 2, card layout for books -> Interaction: Table sorting/hover, clickable book cards for more info (simulated) -> Justification: Easy comparison of educational resources.
+        - Report Info: Portfolio Building (Table 3) -> Goal: Guide/Instruct -> Presentation: Text tips, interactive HTML checklist (Tabela 3) -> Interaction: Checklist items -> Justification: Actionable advice and self-assessment.
+        - Report Info: Selective Process -> Goal: Inform/Prepare -> Presentation: Bullet points for interview question types and tips -> Interaction: Static -> Justification: Concise preparation points.
+        - Report Info: Market References & Communities, Brazilian Investments -> Goal: Inform/Contextualize -> Presentation: Text, Bar Chart for Brazilian Investments -> Interaction: Chart.js tooltips -> Justification: Market insights and visual data on investment.
+        - Report Info: Conclusions & Recommendations -> Goal: Summarize/Action -> Presentation: Bulleted list -> Interaction: Static -> Justification: Key takeaways.
+        - Library/Method: Tailwind CSS for styling, Vanilla JS for interactions, Chart.js for visualizations.
+    -->
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .bg-warm-neutral-light { background-color: #FDFBF5; } /* Light Beige */
+        .text-warm-neutral-dark { color: #36322F; } /* Dark Gray */
+        .text-warm-accent-heading { color: #C06C56; } /* Muted Terracotta */
+        .text-warm-accent-subtle { color: #5E8B7E; } /* Subtle Teal */
+        .border-warm-accent-subtle { border-color: #5E8B7E; }
+        .bg-warm-accent-subtle { background-color: #5E8B7E; }
+        .bg-warm-accent-subtle-light { background-color: #A6C4B3; } /* Lighter Teal for accents */
+        .hover-bg-warm-accent-subtle-dark:hover { background-color: #4A6F64; } /* Darker Teal for hover */
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-weight: 500;
+        }
+        .nav-link:hover, .nav-link.active {
+            background-color: #C06C56; /* Muted Terracotta */
+            color: #FDFBF5; /* Light Beige */
+        }
+        .section-title {
+            font-size: 2.25rem; /* 36px */
+            font-weight: 700;
+            margin-bottom: 1.5rem; /* 24px */
+            color: #C06C56; /* Muted Terracotta */
+        }
+        .subsection-title {
+            font-size: 1.5rem; /* 24px */
+            font-weight: 600;
+            margin-top: 1.5rem; /* 24px */
+            margin-bottom: 1rem; /* 16px */
+            color: #5E8B7E; /* Subtle Teal */
+        }
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 0.5rem; /* 8px */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem; /* 24px */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem 0.375rem 0 0;
+            font-weight: 500;
+            cursor: pointer;
+            background-color: #EAE6E1; /* Lighter neutral for inactive tabs */
+            color: #36322F;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-button.active {
+            background-color: #5E8B7E; /* Subtle Teal */
+            color: #FDFBF5;
+            border-bottom: 2px solid #C06C56; /* Muted Terracotta */
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td {
+            text-align: left;
+            padding: 0.75rem; /* 12px */
+            border-bottom: 1px solid #EAE6E1; /* Light neutral border */
+        }
+        th { background-color: #A6C4B3; color: #36322F; } /* Lighter Teal for table headers */
+        tr:hover { background-color: #F5F2ED; } /* Very light hover for table rows */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Default max-width */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px; /* Max height */
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 350px; }
+        }
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.875rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px; /* Space for the dot and line */
+            margin-bottom: 20px;
+            border-left: 2px solid #A6C4B3; /* Lighter Teal for timeline */
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -9px; /* Adjust to center on the line */
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #5E8B7E; /* Subtle Teal */
+            border: 2px solid #FDFBF5; /* Background color for a "cutout" effect */
+        }
+        .timeline-content h4 {
+            color: #C06C56; /* Muted Terracotta */
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-warm-neutral-light text-warm-neutral-dark">
+
+    <header class="bg-warm-neutral-light shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3 flex flex-wrap justify-between items-center">
+            <a href="#" class="text-warm-accent-heading text-2xl font-bold">Carreira em Dados</a>
+            <button id="nav-toggle" class="md:hidden text-warm-accent-heading">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+            </button>
+            <div id="nav-menu" class="w-full md:w-auto md:flex hidden mt-4 md:mt-0">
+                <ul class="flex flex-col md:flex-row md:space-x-2">
+                    <li><a href="#introducao" class="nav-link block">Introdução</a></li>
+                    <li><a href="#competencias" class="nav-link block">Competências</a></li>
+                    <li><a href="#ferramentas" class="nav-link block">Ferramentas</a></li>
+                    <li><a href="#roteiro" class="nav-link block">Roteiro</a></li>
+                    <li><a href="#cursos-livros" class="nav-link block">Cursos & Livros</a></li>
+                    <li><a href="#portfolio" class="nav-link block">Portfólio</a></li>
+                    <li><a href="#selecao" class="nav-link block">Seleção</a></li>
+                    <li><a href="#mercado" class="nav-link block">Mercado</a></li>
+                    <li><a href="#conclusao" class="nav-link block">Conclusão</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+        <section id="introducao" class="py-12">
+            <h2 class="section-title text-center">Bem-vindo ao Guia de Carreira para Cientista de Dados</h2>
+            <p class="mt-4 text-lg text-center max-w-3xl mx-auto">
+                A Ciência de Dados é um campo estratégico e de alta demanda. Este guia visa oferecer um roteiro prático e eficiente, alinhado ao princípio 80/20, para acelerar sua entrada e sucesso nesta carreira promissora. Explore as seções para descobrir as competências essenciais, ferramentas, recursos de aprendizado e muito mais.
+            </p>
+            <div class="mt-8 text-center">
+                 <img src="https://placehold.co/600x300/FDFBF5/36322F?text=Visualiza%C3%A7%C3%A3o+Abstrata+de+Dados" alt="Visualização Abstrata de Dados" class="mx-auto rounded-lg shadow-lg" onerror="this.src='https://placehold.co/600x300/FDFBF5/36322F?text=Erro+ao+carregar+imagem';">
+            </div>
+        </section>
+
+        <section id="competencias" class="py-12 bg-white rounded-lg shadow-lg my-8 p-8">
+            <h2 class="section-title">Competências Essenciais do Cientista de Dados</h2>
+            <p class="mb-6">A carreira em Ciência de Dados é multidisciplinar, exigindo uma combinação de habilidades técnicas e interpessoais. O sucesso não se baseia apenas na manipulação de dados, mas também na compreensão do negócio e na comunicação eficaz.</p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card">
+                    <h3 class="subsection-title">Fundamentos Técnicos Indispensáveis</h3>
+                    <ul class="list-disc list-inside space-y-2 mt-4">
+                        <li><strong>Matemática e Estatística:</strong> Álgebra Linear, Cálculo, Probabilidade, Estatística Descritiva e Inferencial.</li>
+                        <li><strong>Programação:</strong> Python (com Pandas, NumPy, Scikit-learn), R, SQL.</li>
+                        <li><strong>Machine Learning (ML) e Deep Learning (DL):</strong> Algoritmos de classificação, regressão, clusterização.</li>
+                        <li><strong>Manipulação e Limpeza de Dados:</strong> Data Wrangling/Cleaning.</li>
+                        <li><strong>Visualização de Dados:</strong> Transformar dados em gráficos e relatórios compreensíveis.</li>
+                        <li><strong>Conhecimento de Negócio/Domínio:</strong> Entender o problema de negócio.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="subsection-title">Habilidades Interpessoais (Soft Skills) Cruciais</h3>
+                    <ul class="list-disc list-inside space-y-2 mt-4">
+                        <li><strong>Pensamento Crítico e Resolução de Problemas:</strong> Identificar problemas e desenvolver soluções analíticas.</li>
+                        <li><strong>Comunicação e Storytelling:</strong> Comunicar descobertas de forma clara para públicos diversos.</li>
+                        <li><strong>Colaboração:</strong> Trabalhar efetivamente em equipe.</li>
+                        <li><strong>Curiosidade e Aprendizado Contínuo:</strong> Manter-se atualizado com as novas tecnologias.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="ferramentas" class="py-12">
+            <h2 class="section-title">Ferramentas e Linguagens Chave</h2>
+            <p class="mb-6">O arsenal de um Cientista de Dados é vasto. Conhecer as principais linguagens e ferramentas é crucial para otimizar o fluxo de trabalho e a eficácia das análises.</p>
+            
+            <div class="mb-6">
+                <div class="flex border-b border-gray-300">
+                    <button class="tab-button active" onclick="openTab(event, 'linguagens')">Linguagens</button>
+                    <button class="tab-button" onclick="openTab(event, 'bi-visualizacao')">BI e Visualização</button>
+                    <button class="tab-button" onclick="openTab(event, 'bigdata-ml')">Big Data & ML</button>
+                </div>
+
+                <div id="linguagens" class="tab-content active p-4 bg-white rounded-b-lg shadow">
+                    <h3 class="subsection-title">Linguagens de Programação Essenciais</h3>
+                    <p>Python e SQL são fundamentais para iniciar, com R sendo uma forte alternativa para análise estatística.</p>
+                    <ul class="list-disc list-inside space-y-1 mt-2">
+                        <li><strong>Python:</strong> Versátil, rico ecossistema (Pandas, NumPy, Scikit-learn, TensorFlow/Keras).</li>
+                        <li><strong>R:</strong> Foco em estatística e visualização (Tidyverse, caret).</li>
+                        <li><strong>SQL:</strong> Essencial para manipulação de dados em bancos relacionais.</li>
+                        <li>Outras: Java, Julia, Scala, C/C++, JavaScript, Go (para especialização).</li>
+                    </ul>
+                    <h4 class="text-lg font-semibold mt-6 mb-2 text-warm-accent-subtle">Popularidade Relativa de Linguagens para Iniciantes</h4>
+                    <div class="chart-container mx-auto">
+                        <canvas id="linguagensChart"></canvas>
+                    </div>
+                </div>
+
+                <div id="bi-visualizacao" class="tab-content p-4 bg-white rounded-b-lg shadow">
+                    <h3 class="subsection-title">Ferramentas de Business Intelligence (BI) e Visualização</h3>
+                    <p>Transformam dados em insights compreensíveis.</p>
+                    <ul class="list-disc list-inside space-y-1 mt-2">
+                        <li><strong>Microsoft Power BI:</strong> Popular, interface intuitiva, integração com Microsoft.</li>
+                        <li><strong>Tableau:</strong> Excelente para exploração de dados e descoberta de tendências.</li>
+                        <li><strong>Google Looker:</strong> Nível empresarial, integração com Google Cloud.</li>
+                        <li><strong>Microsoft Excel:</strong> Básico, mas útil para organização e análises menores.</li>
+                         <li>Outras: Qlik Sense, Sisense, SAP BI Suite.</li>
+                    </ul>
+                </div>
+
+                <div id="bigdata-ml" class="tab-content p-4 bg-white rounded-b-lg shadow">
+                    <h3 class="subsection-title">Plataformas para Big Data e Machine Learning</h3>
+                    <p>Para lidar com grandes volumes de dados e modelos complexos.</p>
+                    <ul class="list-disc list-inside space-y-1 mt-2">
+                        <li><strong>Apache Spark:</strong> Processamento distribuído para análises em tempo real.</li>
+                        <li><strong>Google BigQuery:</strong> Solução serverless para análise de grandes volumes na nuvem.</li>
+                        <li><strong>SAS Viya:</strong> Análise na memória com IA para grandes empresas.</li>
+                        <li>Outras: KNIME, RapidMiner, Orange.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="roteiro" class="py-12 bg-white rounded-lg shadow-lg my-8 p-8">
+            <h2 class="section-title">Roteiro de Estudos Otimizado (80/20)</h2>
+            <p class="mb-6">Este plano de 6-12 meses foca nos 20% de conhecimentos que trarão 80% dos resultados, com progressão lógica da teoria à prática.</p>
+            
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold mb-2 text-warm-accent-subtle">Distribuição de Foco no Roteiro (12 Meses)</h4>
+                <div class="chart-container mx-auto mb-8">
+                    <canvas id="roteiroChart"></canvas>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <div class="timeline-item card">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>Fase 1: Construindo a Base (Meses 1-3)</h4>
+                        <p class="text-sm text-gray-600 mb-2">Foco em fundamentos sólidos em Matemática, Estatística e Programação.</p>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Matemática:</strong> Álgebra Linear, Cálculo Básico.</li>
+                            <li><strong>Estatística:</strong> Probabilidade, Descritiva, Inferencial.</li>
+                            <li><strong>Programação Python:</strong> Sintaxe, NumPy, Pandas.</li>
+                            <li><strong>SQL:</strong> Consultas básicas, JOINs.</li>
+                            <li><strong>Projetos:</strong> EDA simples, manipulação de dados.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item card">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>Fase 2: Aprofundamento em ML e Ferramentas (Meses 4-8)</h4>
+                        <p class="text-sm text-gray-600 mb-2">Introdução e aplicação de algoritmos de Machine Learning e ferramentas de BI.</p>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Machine Learning:</strong> Regressão, Classificação, Clusterização (Scikit-learn).</li>
+                            <li><strong>Visualização Avançada:</strong> Matplotlib, Seaborn.</li>
+                            <li><strong>Ferramentas de BI:</strong> Power BI ou Tableau.</li>
+                            <li><strong>Projetos:</strong> Modelos preditivos simples, dashboards interativos.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item card">
+                     <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>Fase 3: Especialização e Preparação para o Mercado (Meses 9-12)</h4>
+                        <p class="text-sm text-gray-600 mb-2">Tópicos avançados, otimização do portfólio e preparação para seleção.</p>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><strong>Tópicos Avançados:</strong> Deep Learning (TensorFlow/Keras) OU Big Data (Spark) OU MLOps.</li>
+                            <li><strong>Engenharia de Features e Otimização de Modelos.</strong></li>
+                            <li><strong>Projetos:</strong> Mais complexos (Kaggle), refinar portfólio, estudos de caso.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title mt-10">Tabela 1: Plano de Estudos Detalhado (12 Meses)</h3>
+            <div class="overflow-x-auto">
+                <table id="studyPlanTable" class="min-w-full">
+                    <thead>
+                        <tr>
+                            <th>Mês/Fase</th>
+                            <th>Foco Principal</th>
+                            <th>Tópicos Chave</th>
+                            <th>Ferramentas/Bibliotecas</th>
+                            <th>Projetos Sugeridos</th>
+                            <th>Recursos Recomendados</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1-3: Fundamentos</td>
+                            <td>Python Básico, SQL, Estatística Descritiva</td>
+                            <td>Sintaxe Python, Pandas, JOINs SQL, Testes Hipóteses, Distribuições</td>
+                            <td>Jupyter/Colab, DB Browser, Pandas, NumPy</td>
+                            <td>EDA dataset simples, Manipulação Pandas/SQL</td>
+                            <td>Livro "Data Science do Zero", Curso FGV Intro CD</td>
+                        </tr>
+                        <tr>
+                            <td>4-8: ML & Ferramentas</td>
+                            <td>Regressão, Classificação, Visualização Avançada, BI</td>
+                            <td>Scikit-learn (modelos), Matplotlib/Seaborn (gráficos), Dashboards</td>
+                            <td>Scikit-learn, Matplotlib, Seaborn, Power BI/Tableau</td>
+                            <td>Previsão preços imóveis, Classificação clientes, Dashboard vendas</td>
+                            <td>Cursos Capacita Gov.br (Visualização, Power BI)</td>
+                        </tr>
+                        <tr>
+                            <td>9-12: Especialização & Mercado</td>
+                            <td>Deep Learning, Big Data, MLOps, Otimização</td>
+                            <td>Redes Neurais (CNN/RNN), Spark, Hadoop, NoSQL, Eng. Features</td>
+                            <td>TensorFlow/Keras, Apache Spark, GitHub, Kaggle</td>
+                            <td>Classificação imagens, Análise Big Data, Deploy modelo</td>
+                            <td>Certificação Azure DP-100, Pós Insper</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="cursos-livros" class="py-12">
+            <h2 class="section-title">Cursos, Certificações e Livros Fundamentais</h2>
+            <p class="mb-6">Combine recursos gratuitos e pagos, certificações e leituras para uma formação completa.</p>
+            
+            <h3 class="subsection-title">Cursos Online e Formações</h3>
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="card">
+                    <h4 class="font-semibold text-warm-accent-heading">Gratuitos/Acessíveis</h4>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>FGV Educação Executiva - Introdução à Ciência de Dados</li>
+                        <li>Capacita Gov.br (Estatística, Python, Power BI, Storytelling)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 class="font-semibold text-warm-accent-heading">Pagos/Formações Robustas</h4>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Data Science Academy (DSA) - Formação Cientista de Dados</li>
+                        <li>Insper - Programa Avançado em Data Science e Decisão</li>
+                        <li>Coursera, Udacity, DataCamp</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Certificações Reconhecidas</h3>
+             <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="card">
+                    <h4 class="font-semibold text-warm-accent-heading">Microsoft Certified: Azure Data Scientist Associate (DP-100)</h4>
+                    <p class="text-sm">Foco em Azure, ML. Validade 12 meses.</p>
+                </div>
+                 <div class="card">
+                    <h4 class="font-semibold text-warm-accent-heading">DSPA Certificações (Foundational, Intermédio, Avançado)</h4>
+                    <p class="text-sm">Níveis progressivos, validade 3-4 anos.</p>
+                </div>
+            </div>
+            
+            <h3 class="subsection-title">Livros Essenciais</h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="card text-center">
+                    <img src="https://placehold.co/150x200/A6C4B3/36322F?text=Data+Science+do+Zero" alt="Capa Livro Data Science do Zero" class="mx-auto mb-2 rounded" onerror="this.src='https://placehold.co/150x200/A6C4B3/36322F?text=Erro';">
+                    <h4 class="font-semibold">Data Science do Zero</h4>
+                    <p class="text-sm">Joel Grus</p>
+                </div>
+                <div class="card text-center">
+                    <img src="https://placehold.co/150x200/A6C4B3/36322F?text=Storytelling+com+Dados" alt="Capa Livro Storytelling com Dados" class="mx-auto mb-2 rounded" onerror="this.src='https://placehold.co/150x200/A6C4B3/36322F?text=Erro';">
+                    <h4 class="font-semibold">Storytelling com Dados</h4>
+                    <p class="text-sm">Cole Nussbaumer Knaflic</p>
+                </div>
+                <div class="card text-center">
+                    <img src="https://placehold.co/150x200/A6C4B3/36322F?text=Machine+Learning+Guia" alt="Capa Livro Machine Learning Guia Rápido" class="mx-auto mb-2 rounded" onerror="this.src='https://placehold.co/150x200/A6C4B3/36322F?text=Erro';">
+                    <h4 class="font-semibold">Machine Learning — Guia de Referência Rápida</h4>
+                    <p class="text-sm">Matt Harrison</p>
+                </div>
+                <div class="card text-center">
+                    <img src="https://placehold.co/150x200/A6C4B3/36322F?text=Data+Science+Neg%C3%B3cios" alt="Capa Livro Data Science para Negócios" class="mx-auto mb-2 rounded" onerror="this.src='https://placehold.co/150x200/A6C4B3/36322F?text=Erro';">
+                    <h4 class="font-semibold">Data Science para Negócios</h4>
+                    <p class="text-sm">Foster Provost & Tom Fawcett</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title mt-10">Tabela 2: Comparativo de Cursos e Certificações</h3>
+            <div class="overflow-x-auto">
+                <table id="coursesCertificationsTable" class="min-w-full">
+                    <thead>
+                        <tr>
+                            <th>Nome/Tipo</th>
+                            <th>Foco Principal</th>
+                            <th>Duração/Carga</th>
+                            <th>Custo</th>
+                            <th>Reconhecimento</th>
+                            <th>Público Alvo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Curso FGV Intro CD</td>
+                            <td>Fundamentos e Ética</td>
+                            <td>60h</td>
+                            <td>Gratuito</td>
+                            <td>Declaração</td>
+                            <td>Iniciantes, estudantes</td>
+                        </tr>
+                        <tr>
+                            <td>Cert. Azure DP-100</td>
+                            <td>ML e CD no Azure</td>
+                            <td>100 min (exame)</td>
+                            <td>~165 USD</td>
+                            <td>Global (12 meses)</td>
+                            <td>Profissionais ML/Azure</td>
+                        </tr>
+                        <tr>
+                            <td>Formação DSA CD 4.0</td>
+                            <td>Carreira Completa, Projetos</td>
+                            <td>Varia</td>
+                            <td>Consultar</td>
+                            <td>Prática Mercado</td>
+                            <td>Aspirantes CD</td>
+                        </tr>
+                        <tr>
+                            <td>Pós Insper Data Science</td>
+                            <td>Decisão Executiva</td>
+                            <td>424h (18 meses)</td>
+                            <td>Consultar</td>
+                            <td>Pós Lato Sensu (MEC)</td>
+                            <td>Profissionais com vivência</td>
+                        </tr>
+                         <tr>
+                            <td>Certificações DSPA</td>
+                            <td>Competências por níveis</td>
+                            <td>Varia</td>
+                            <td>100€ - 450€</td>
+                            <td>Níveis (3-4 anos)</td>
+                            <td>Iniciantes a experientes</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="portfolio" class="py-12 bg-white rounded-lg shadow-lg my-8 p-8">
+            <h2 class="section-title">Construindo um Portfólio de Destaque</h2>
+            <p class="mb-6">Seu portfólio é sua vitrine prática. Ele demonstra conhecimento técnico, proatividade e habilidade de comunicar resultados.</p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="subsection-title">Estrutura e Conteúdo Essencial</h3>
+                    <ul class="list-disc list-inside space-y-2 mt-4">
+                        <li><strong>Plataforma:</strong> Site próprio (Wix, Github Pages) e GitHub para código.</li>
+                        <li><strong>Seções:</strong> Página Inicial, Sobre Você, Habilidades, Projetos, Contato.</li>
+                        <li><strong>Projetos:</strong> Foco em problemas de negócio, comunicação clara dos resultados, visualizações, código limpo e organizado, referências.</li>
+                        <li><strong>Dicas:</strong> Qualidade sobre quantidade, ciclo completo de dados, personalização.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="subsection-title">Tabela 3: Checklist para Portfólio de Sucesso</h3>
+                    <ul id="portfolioChecklist" class="space-y-2 mt-4">
+                        <li class="flex items-center"><input type="checkbox" class="mr-2 accent-warm-accent-subtle"> Página "Sobre Você" clara e completa.</li>
+                        <li class="flex items-center"><input type="checkbox" class="mr-2 accent-warm-accent-subtle"> Link para GitHub com código dos projetos.</li>
+                        <li class="flex items-center"><input type="checkbox" class="mr-2 accent-warm-accent-subtle"> Relatório de cada projeto demonstrando valor.</li>
+                        <li class="flex items-center"><input type="checkbox" class="mr-2 accent-warm-accent-subtle"> Código comentado e organizado.</li>
+                        <li class="flex items-center"><input type="checkbox" class="mr-2 accent-warm-accent-subtle"> Visualizações claras e impactantes.</li>
+                        <li class="flex items-center"><input type="checkbox" class="mr-2 accent-warm-accent-subtle"> Projetos resolvendo problemas de negócio.</li>
+                        <li class="flex items-center"><input type="checkbox" class="mr-2 accent-warm-accent-subtle"> Referências e fontes citadas.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="selecao" class="py-12">
+            <h2 class="section-title">O Processo Seletivo para Cientistas de Dados</h2>
+            <p class="mb-6">Prepare-se para um processo multifacetado que avalia competências técnicas e interpessoais.</p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card">
+                    <h3 class="subsection-title">O que Esperar das Entrevistas</h3>
+                    <ul class="list-disc list-inside space-y-2 mt-4">
+                        <li><strong>Perguntas Técnicas Gerais:</strong> Análise de dados, mineração, modelagem, EDA, limpeza de dados.</li>
+                        <li><strong>Perguntas de Estatística:</strong> Imputação, distribuições, overfitting/underfitting, outliers, testes A/B, hipóteses.</li>
+                        <li><strong>Perguntas de Ferramentas:</strong> SQL, Tableau, Python/R (problemas de codificação).</li>
+                        <li><strong>Estudos de Caso:</strong> Resolução de problemas de negócio.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="subsection-title">Dicas para o Sucesso</h3>
+                    <ul class="list-disc list-inside space-y-2 mt-4">
+                        <li>Pratique codificação (Python/R, SQL).</li>
+                        <li>Revise conceitos de estatística, matemática e ML.</li>
+                        <li>Prepare exemplos para perguntas comportamentais.</li>
+                        <li>Pesquise a empresa e seus desafios de dados.</li>
+                        <li>Esteja pronto para discutir seu portfólio em detalhes.</li>
+                        <li>Demonstre habilidades de comunicação e pensamento crítico.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="mercado" class="py-12 bg-white rounded-lg shadow-lg my-8 p-8">
+            <h2 class="section-title">Referências de Mercado e Comunidades no Brasil</h2>
+            <p class="mb-6">Mantenha-se atualizado com as tendências e participe de comunidades ativas.</p>
+            
+            <h3 class="subsection-title">Setores em Crescimento e Investimentos</h3>
+            <p>A demanda é alta em saúde, finanças, e-commerce, mídias sociais. O Brasil tem investido significativamente em Big Data, Analytics e IA.</p>
+            <div class="mt-6 mb-8">
+                <h4 class="text-lg font-semibold mb-2 text-warm-accent-subtle">Investimento Estimado no Brasil (2022, IDC)</h4>
+                <div class="chart-container mx-auto">
+                    <canvas id="investimentoBrasilChart"></canvas>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Comunidades e Eventos</h3>
+             <div class="grid md:grid-cols-2 gap-6">
+                <div class="card">
+                    <h4 class="font-semibold text-warm-accent-heading">Plataformas Globais</h4>
+                    <ul class="list-disc list-inside mt-2">
+                        <li>Kaggle (competições, comunidade)</li>
+                        <li>Meetup.com (grupos locais e online)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 class="font-semibold text-warm-accent-heading">Recursos e Eventos no Brasil</h4>
+                    <ul class="list-disc list-inside mt-2">
+                        <li>Data Science Academy Blog (artigos, carreira)</li>
+                        <li>Simpósio Brasileiro de Banco de Dados (SBBD) e eventos conjuntos (BRACIS, KDMiLe)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="conclusao" class="py-12">
+            <h2 class="section-title">Conclusões e Recomendações Acionáveis</h2>
+            <p class="mb-6 text-lg text-center max-w-3xl mx-auto">A carreira de Cientista de Dados é promissora. Sucesso depende de habilidades técnicas, interpessoais e aprendizado contínuo.</p>
+            <div class="max-w-2xl mx-auto bg-warm-accent-subtle-light p-6 rounded-lg shadow-md">
+                <ul class="list-decimal list-inside space-y-3 text-warm-neutral-dark font-medium">
+                    <li><strong>Priorize os Fundamentos:</strong> Domine Python, SQL, estatística e matemática.</li>
+                    <li><strong>Desenvolva Habilidades de Comunicação:</strong> Traduza análises complexas em narrativas claras (storytelling com dados).</li>
+                    <li><strong>Construa um Portfólio Estratégico:</strong> Projete soluções para problemas de negócio reais e comunique o impacto.</li>
+                    <li><strong>Explore Cursos e Certificações:</strong> Use recursos gratuitos para iniciar e invista em formações e certificações reconhecidas.</li>
+                    <li><strong>Mantenha-se em Aprendizado Contínuo:</strong> Participe de comunidades e acompanhe blogs e eventos do setor.</li>
+                </ul>
+            </div>
+             <p class="mt-8 text-center text-lg">Ao seguir este roteiro, você estará bem posicionado para iniciar e prosperar nesta carreira dinâmica!</p>
+        </section>
+    </main>
+
+    <footer class="bg-warm-neutral-dark text-warm-neutral-light text-center p-6 mt-12">
+        <p>&copy; <span id="currentYear"></span> Plano de Carreira Interativo. Baseado no relatório fornecido.</p>
+        <p class="text-sm">Desenvolvido para fins de demonstração.</p>
+    </footer>
+
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Mobile navigation toggle
+        const navToggle = document.getElementById('nav-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        if (navToggle && navMenu) {
+            navToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Smooth scroll for navigation links and active state
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                // For mobile, hide menu after click
+                if (navMenu && !navMenu.classList.contains('hidden') && window.innerWidth < 768) {
+                    navMenu.classList.add('hidden');
+                }
+            });
+        });
+        
+        // Active link highlighting on scroll
+        const sections = document.querySelectorAll('section[id]');
+        window.addEventListener('scroll', navHighlighter);
+
+        function navHighlighter() {
+          let scrollY = window.pageYOffset;
+          sections.forEach(current => {
+            const sectionHeight = current.offsetHeight;
+            const sectionTop = current.offsetTop - 100; // Adjusted for sticky header
+            let sectionId = current.getAttribute('id');
+            
+            let correspondingLink = document.querySelector(`.nav-link[href*="${sectionId}"]`);
+            if (correspondingLink) {
+                if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight){
+                    navLinks.forEach(link => link.classList.remove('active'));
+                    correspondingLink.classList.add('active');
+                } else {
+                    correspondingLink.classList.remove('active');
+                }
+            }
+          });
+        }
+
+
+        // Tab functionality
+        function openTab(event, tabName) {
+            let i, tabcontent, tabbuttons;
+            const parent = event.currentTarget.closest('div.mb-6'); // Find the parent container of tabs for this section
+
+            tabcontent = parent.querySelectorAll(".tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+
+            tabbuttons = parent.querySelectorAll(".tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].classList.remove("active");
+            }
+
+            parent.querySelector("#" + tabName).style.display = "block";
+            parent.querySelector("#" + tabName).classList.add("active");
+            event.currentTarget.classList.add("active");
+        }
+        // Initialize first tab for each tab group
+        document.querySelectorAll('.flex.border-b').forEach(tabGroupHeader => {
+            const firstButton = tabGroupHeader.querySelector('.tab-button');
+            if (firstButton) {
+                firstButton.click();
+            }
+        });
+
+
+        // Chart.js - Linguagens
+        const linguagensCtx = document.getElementById('linguagensChart');
+        if (linguagensCtx) {
+            new Chart(linguagensCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Python', 'SQL', 'R', 'Java/Scala', 'JS/Julia/Go/C++'],
+                    datasets: [{
+                        label: 'Popularidade Relativa para Iniciantes',
+                        data: [10, 9, 8, 6, 4],
+                        backgroundColor: [
+                            'rgba(94, 139, 126, 0.7)', // Subtle Teal
+                            'rgba(192, 108, 86, 0.7)', // Muted Terracotta
+                            'rgba(166, 196, 179, 0.7)', // Lighter Teal
+                            'rgba(229, 152, 102, 0.7)', // Warm Orange
+                            'rgba(128, 128, 128, 0.7)'  // Neutral Gray
+                        ],
+                        borderColor: [
+                            'rgba(94, 139, 126, 1)',
+                            'rgba(192, 108, 86, 1)',
+                            'rgba(166, 196, 179, 1)',
+                            'rgba(229, 152, 102, 1)',
+                            'rgba(128, 128, 128, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, suggestedMax: 10 } },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + ' (score de relevância)';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Chart.js - Roteiro de Estudos
+        const roteiroCtx = document.getElementById('roteiroChart');
+        if (roteiroCtx) {
+            new Chart(roteiroCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Fundamentos (Meses 1-3)', 'ML & Ferramentas (Meses 4-8)', 'Especialização & Mercado (Meses 9-12)'],
+                    datasets: [{
+                        label: 'Distribuição de Foco no Roteiro',
+                        data: [25, 41.7, 33.3], // Percentages
+                        backgroundColor: [
+                            'rgba(192, 108, 86, 0.8)', // Muted Terracotta
+                            'rgba(94, 139, 126, 0.8)',  // Subtle Teal
+                            'rgba(166, 196, 179, 0.8)'  // Lighter Teal
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed.toFixed(1) + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // Chart.js - Investimento Brasil
+        const investimentoCtx = document.getElementById('investimentoBrasilChart');
+        if (investimentoCtx) {
+            new Chart(investimentoCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Big Data & Analytics', 'IA & Machine Learning'],
+                    datasets: [
+                        {
+                            label: 'Investimento em US$ (2022)',
+                            data: [2900, 504], // Em milhões, para melhor escala
+                            backgroundColor: 'rgba(94, 139, 126, 0.7)', // Subtle Teal
+                            borderColor: 'rgba(94, 139, 126, 1)',
+                            borderWidth: 1,
+                            yAxisID: 'yAmount',
+                        },
+                        {
+                            label: 'Crescimento Anual Estimado (%)',
+                            data: [10.8, 28],
+                            backgroundColor: 'rgba(192, 108, 86, 0.7)', // Muted Terracotta
+                            borderColor: 'rgba(192, 108, 86, 1)',
+                            borderWidth: 1,
+                            yAxisID: 'yGrowth',
+                            type: 'line', // Linha para crescimento
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAmount: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            beginAtZero: true,
+                            title: { display: true, text: 'Investimento (Milhões USD)'}
+                        },
+                        yGrowth: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            beginAtZero: true,
+                            title: { display: true, text: 'Crescimento (%)'},
+                            grid: { drawOnChartArea: false } // Não desenhar grid para o eixo secundário
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) {
+                                        if (context.datasetIndex === 0) {
+                                            label += '$' + context.parsed.y + ' Milhões';
+                                        } else {
+                                            label += context.parsed.y + '%';
+                                        }
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Simple table hover effect (can be expanded for sorting/filtering)
+        document.querySelectorAll('table tbody tr').forEach(row => {
+            row.addEventListener('mouseenter', () => row.style.backgroundColor = '#F0EBDB'); // Slightly darker beige
+            row.addEventListener('mouseleave', () => row.style.backgroundColor = '');
+        });
+
+    </script>
+</body>
+</html>
